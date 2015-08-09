@@ -54,10 +54,7 @@ public class Pyramid {
         }
 
         if (largest != i) {
-            int temp = array[largest];
-            array[largest] = array[i];
-            array[i] = temp;
-
+            swap(array, i, largest);
             maxHeapify(array, largest);
         }
     }
@@ -72,5 +69,11 @@ public class Pyramid {
             heapSize--;
             maxHeapify(array, 0);
         }
+    }
+    
+    private void swap(int [] array, int i, int j) {
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 }
