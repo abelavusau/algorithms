@@ -25,10 +25,11 @@ public class Insertion {
     private static void sort(int[] a) {
         out(a);
         for (int i = 1; i < a.length; i++) {
-            for (int j = i; j > 0 && a[j - 1] > a[j]; j--) {
-                // пока j > 0 и элемент j - 1 > j
-                swap(a, j - 1, j); // меняем местами элементы j и j - 1
-                out(a);
+            for (int j = i; j > 0; j--) {
+        	if (a[j - 1] > a[j]) {
+        	    swap(a, j - 1, j);
+                    out(a);
+        	}
             }
         }
     }
