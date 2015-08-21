@@ -9,7 +9,6 @@ public class BinaryTree<T> {
 	private static class Node<T> {
 		int key;
 		T value;
-		Node<T> parent;
 		Node<T> left;
 		Node<T> right;
 
@@ -123,11 +122,7 @@ public class BinaryTree<T> {
 				Node<T> min = getMin(node.right);
 				node.key = min.key;
 				node.value = min.value;
-				
-				if (min.right != null) {
-				}
-				
-				min = null;
+				min = min.right;
 			}
 			
 			return node;
