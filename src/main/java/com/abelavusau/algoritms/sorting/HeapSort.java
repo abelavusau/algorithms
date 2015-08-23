@@ -108,7 +108,7 @@ public class HeapSort {
 		while (heapSize > 1) {
 			swap(array, 0, heapSize - 1);
 			heapSize--;
-			heapify(array, 0); // put max element in the root of the heap
+			heapify(array, 0); // again put max element in the root of the heap
 		}
 	}
 
