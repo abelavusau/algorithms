@@ -1,4 +1,4 @@
-package com.abelavusau.algoritms.sorting;
+package com.abelavusau.algoritms.datastructures;
 
 import java.util.Random;
 
