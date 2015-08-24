@@ -2,7 +2,7 @@ package com.abelavusau.algoritms.datastructures;
 
 import java.util.Random;
 
-public class BinaryTree<T> {
+public class BinarySearchTree<T> {
 	private Node<T> root;
 
 	@SuppressWarnings("unused")
@@ -129,16 +129,25 @@ public class BinaryTree<T> {
 		}
 	}
 	
+	private void infixTraverse(Node<T> node) {
+		if (node != null) {
+			infixTraverse(node.left);
+			System.out.printf("%d ", node.key);
+			infixTraverse(node.right);
+		}
+	}
+	
 	public static void main(String[] args) {
 		Random rand = new Random();
-		BinaryTree<Integer> binaryTree = new BinaryTree<>();
+		BinarySearchTree<Integer> binaryTree = new BinarySearchTree<>();
 		
 		for (int i = 0; i < 15; i++) {
 			binaryTree.addNode(rand.nextInt(100), i);
 		}
 		
-		binaryTree.deleteNode(19);
 		System.out.printf("Max=%d\n", binaryTree.getMax(binaryTree.root).key);
 		System.out.printf("Min=%d\n", binaryTree.getMin(binaryTree.root).key);
+		System.out.println("Sotred tree: ");
+		binaryTree.infixTraverse(binaryTree.root);
 	}
 }
