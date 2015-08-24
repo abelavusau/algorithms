@@ -2,6 +2,14 @@ package com.abelavusau.algoritms.sorting;
 
 import java.util.Random;
 
+/**
+ * Insertion sort
+ * 
+ * Time complexity: O(n^2)
+ * 
+ * @author abelavusau
+ *
+ */
 public class Insertion {
     public static void main(String[] args) {
         Random rand = new Random();

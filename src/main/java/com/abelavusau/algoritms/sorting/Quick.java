@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * Quick sort
- * @author N551
+ * @author abelavusau
  *
  * The best time: O(n*log(n))
  * The worst time: O(n^2)

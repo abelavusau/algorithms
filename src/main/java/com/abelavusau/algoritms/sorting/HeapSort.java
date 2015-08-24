@@ -2,6 +2,14 @@ package com.abelavusau.algoritms.sorting;
 
 import java.util.Random;
 
+/**
+ * Heap sort
+ * 
+ * @author abelavusau
+ *
+ * The best time: O(n*log(n))
+ * The worst time: O(n*log(n))
+ */
 public class HeapSort {
 	private int heapSize = 10;
 
