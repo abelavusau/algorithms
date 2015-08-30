@@ -2,8 +2,14 @@ package com.abelavusau.algoritms.sorting;
 
 import java.util.Random;
 
-public class Bubble {
-    
+/**
+ * Insertion sort
+ * 
+ * Time complexity: O(n^2)
+ * 
+ * @author abelavusau
+ */
+public class InsertionSort {
     public static void main(String[] args) {
         Random rand = new Random();
         int[] array = new int[10];
@@ -22,19 +28,19 @@ public class Bubble {
 
         System.out.println();
     }
-    
+
     private static void sort(int[] a) {
         out(a);
-        for (int i = 0; i < a.length - 1; i++) {
-            for (int j = 0; j < a.length - i - 1; j++) {
-                if (a[j] > a[j + 1]) {
-                    swap(a, j, j + 1);
+        for (int i = 1; i < a.length; i++) {
+            for (int j = i; j > 0; j--) {
+        	if (a[j - 1] > a[j]) {
+        	    swap(a, j - 1, j);
                     out(a);
-                }
+        	}
             }
         }
     }
-    
+
     private static void swap(int[] a, int i, int j) {
         int temp = a[i];
         a[i] = a[j];

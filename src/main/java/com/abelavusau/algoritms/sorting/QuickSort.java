@@ -6,10 +6,11 @@ import java.util.Random;
  * Quick sort
  * @author abelavusau
  *
+ * Time complexity:
  * The best time: O(n*log(n))
  * The worst time: O(n^2)
  */
-public class Quick {
+public class QuickSort {
 	public static void main(String[] args) {
 		Random rand = new Random();
 		int[] array = new int[10];

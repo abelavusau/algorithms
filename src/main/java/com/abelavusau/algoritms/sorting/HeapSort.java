@@ -6,7 +6,8 @@ import java.util.Random;
  * Heap sort
  * 
  * @author abelavusau
- *
+ * 
+ * Time complexity:
  * The best time: O(n*log(n))
  * The worst time: O(n*log(n))
  */
