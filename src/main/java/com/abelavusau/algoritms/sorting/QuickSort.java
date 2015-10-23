@@ -35,15 +35,16 @@ public class QuickSort {
 	public static void sort(int[] array, int l, int r) {
 		int i = l;
 		int j = r;
-		int x = array[l + (r - l) / 2];
+		int pivot = array[l + (r - l) / 2];
+		
 		while (i <= j) {
-			// go to the element at the left part which is >= than x (median)
-			while (array[i] < x) {
+			// go to the element at the left part which is >= than pivot
+			while (array[i] < pivot) {
 				i++;
 			}
 			
-			// go to the element at the right part which is <= than x (median)
-			while (array[j] > x) {
+			// go to the element at the right part which is <= than pivot
+			while (array[j] > pivot) {
 				j--;
 			}
 			
