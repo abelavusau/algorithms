@@ -19,11 +19,25 @@ public class QuickSort {
 			array[i] = rand.nextInt(20);
 		}
 
+		System.out.println("initial array:");
 		out(array);
 		sort(array, 0, array.length - 1);
+		System.out.println("ordered array:");
 		out(array);
 	}
 
+	private static void out(int[] array, int pivotIndex) {
+		for (int i = 0; i < array.length; i++) {
+			if (pivotIndex == i) {
+				System.out.print("(" + array[i] + ") ");
+			} else {
+				System.out.print(array[i] + " ");
+			}
+		}
+
+		System.out.println();
+	}
+	
 	private static void out(int[] array) {
 		for (int i = 0; i < array.length; i++) {
 			System.out.print(array[i] + " ");
@@ -35,7 +49,10 @@ public class QuickSort {
 	public static void sort(int[] array, int l, int r) {
 		int i = l;
 		int j = r;
-		int pivot = array[l + (r - l) / 2];
+		int pivotIndex = l + (r - l) / 2;
+		int pivot = array[pivotIndex];
+		
+		out(array, pivotIndex);
 		
 		while (i <= j) {
 			// go to the element at the left part which is >= than pivot
