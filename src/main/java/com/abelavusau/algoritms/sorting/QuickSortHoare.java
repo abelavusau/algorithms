@@ -10,7 +10,7 @@ import java.util.Random;
  * The best time: O(n*log(n))
  * The worst time: O(n^2)
  */
-public class QuickSort {
+public class QuickSortHoare {
 	public static void main(String[] args) {
 		Random rand = new Random();
 		int[] array = new int[10];
@@ -73,10 +73,10 @@ public class QuickSort {
 			}
 		}
 		
-		if (j > l) {
+		if (l < j) {
 			sort(array, l, j);
 		}
-		if (i < r) {
+		if (r > i) {
 			sort(array, i, r);
 		}
 	}
