@@ -20,11 +20,12 @@ public class QuickSortLomuto {
 	}
 
 	private static void sort(int[] array, int left, int right) {
-		if (left >= right) return;
-		
+		if (left >= right)
+			return;
+
 		int i = left - 1;
 		int pivot = right;
-		
+
 		out(array, pivot, left, right);
 
 		for (int j = left; j < right; j++) {
@@ -33,7 +34,7 @@ public class QuickSortLomuto {
 				swap(array, i, j);
 			}
 		}
-		
+
 		swap(array, i + 1, pivot);
 
 		sort(array, left, i);
@@ -48,17 +49,25 @@ public class QuickSortLomuto {
 
 	private static void out(int[] array, int pivotIndex, int left, int right) {
 		System.out.println("--------------------------------------------");
-		
+
 		System.out.println("Left array: ");
-		
+
 		for (int i = 0; i < pivotIndex; i++) {
 			System.out.print(array[i] + " ");
 		}
-		
+
 		System.out.println("\nPivot index = " + pivotIndex);
-		
-		System.out.print("Right array: ");
-		
+
+		for (int i = 0; i < array.length; i++) {
+			if (i == pivotIndex) {
+				System.out.print("(" + array[i] + ") ");
+			} else {
+				System.out.print(array[i] + " ");
+			}
+		}
+
+		System.out.print("\nRight array: ");
+
 		for (int i = pivotIndex; i < array.length; i++) {
 			System.out.print(array[i] + " ");
 		}
