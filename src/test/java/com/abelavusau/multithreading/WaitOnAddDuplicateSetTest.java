@@ -11,15 +11,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WaitOnDuplicateSetTest {
+public class WaitOnAddDuplicateSetTest {
 
-	private WaitOnDuplicateSet<Integer> testee;
+	private WaitOnAddDuplicateSet<Integer> testee;
 	private HashSet<Integer> inner;
 
 	@Before
 	public void setUp() throws Exception {
 		inner = new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-		testee = new WaitOnDuplicateSet<Integer>(inner);
+		testee = new WaitOnAddDuplicateSet<Integer>(inner);
 	}
 
 	@After

@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-public class WaitOnDuplicateSet<E> implements Set<E> {
+public class WaitOnAddDuplicateSet<E> implements Set<E> {
 	private Set<E> inner;
 	private final Object lock = new Object();
 
-	public WaitOnDuplicateSet(Set<E> collection) {
+	public WaitOnAddDuplicateSet(Set<E> collection) {
 		this.inner = collection;
 	}
 
@@ -77,8 +77,23 @@ public class WaitOnDuplicateSet<E> implements Set<E> {
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = false;
+		
+		synchronized (lock) {
+			for (E e : c) {
+				while (this.inner.contains(e)) {
+					try {
+						lock.wait();
+					} catch (InterruptedException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+			
+			result = this.inner.addAll(c);
+		}
+
+		return result;
 	}
 
 	@Override
