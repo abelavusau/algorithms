@@ -54,7 +54,7 @@ public class HeapSort {
 	}
 
 	/**
-	 * Reorder sub-trees with indexes from 0 to a.length. The indexes from
+	 * Reorder sub-trees with indexes from 0 to a.length / 2. The indexes from
 	 * a.length / 2 + 1 to a.length are leaves.
 	 * 
 	 * @param array

@@ -20,25 +20,26 @@ public class QuickSortLomuto {
 	}
 
 	private static void sort(int[] array, int left, int right) {
-		if (left >= right)
+		if (left >= right) {
 			return;
+		}
 
-		int i = left - 1;
+		int wallIndex = left - 1;
 		int pivot = right;
 
 		out(array, pivot, left, right);
 
 		for (int j = left; j < right; j++) {
 			if (array[j] <= array[pivot]) {
-				i++;
-				swap(array, i, j);
+				wallIndex++;
+				swap(array, wallIndex, j);
 			}
 		}
 
-		swap(array, i + 1, pivot);
+		swap(array, wallIndex + 1, pivot);
 
-		sort(array, left, i);
-		sort(array, i + 1, right);
+		sort(array, left, wallIndex);
+		sort(array, wallIndex + 1, right);
 	}
 
 	private static void swap(int[] array, int i, int j) {

@@ -73,11 +73,12 @@ public class QuickSortHoare {
 			}
 		}
 		
+		if (i < r) {
+			sort(array, i, r);
+		}
+		
 		if (l < j) {
 			sort(array, l, j);
-		}
-		if (r > i) {
-			sort(array, i, r);
 		}
 	}
 

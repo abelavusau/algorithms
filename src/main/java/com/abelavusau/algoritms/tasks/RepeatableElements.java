@@ -12,7 +12,6 @@ public class RepeatableElements {
 		HashMap<Integer, Integer> hm = new HashMap<Integer, Integer>();
 		Integer am;
 		for (Integer i : list) {
-
 			am = hm.get(i);
 			hm.put(i, am == null ? 1 : am + 1);
 		}
