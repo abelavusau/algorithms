@@ -45,12 +45,12 @@ public class MergeSort {
 		sort(left);
 		sort(right);
 
-		doSort(left, right, a);
+		merge(left, right, a);
 		out(a);
 	}
 
-	private static void doSort(int[] left, int[] right, int[] a) {
-		int i = 0, j = 0, k = 0; 
+	private static void merge(int[] left, int[] right, int[] a) {
+		int i = 0, j = 0, k = 0;
 		while (i < left.length && j < right.length) {
 			if (left[i] <= right[j]) {
 				a[k] = left[i];
@@ -59,18 +59,20 @@ public class MergeSort {
 				a[k] = right[j];
 				j++;
 			}
-			
+
 			k++;
 		}
-		
+
 		while (i < left.length) {
 			a[k] = left[i];
-			i++; k++;
+			i++;
+			k++;
 		}
-		
+
 		while (j < right.length) {
 			a[k] = right[j];
-			j++; k++;
+			j++;
+			k++;
 		}
 	}
 }

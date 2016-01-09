@@ -24,22 +24,22 @@ public class QuickSortLomuto {
 			return;
 		}
 
-		int wallIndex = left - 1;
+		int pIndex = left - 1;
 		int pivot = right;
 
 		out(array, pivot, left, right);
 
 		for (int j = left; j < right; j++) {
 			if (array[j] <= array[pivot]) {
-				wallIndex++;
-				swap(array, wallIndex, j);
+				pIndex++;
+				swap(array, pIndex , j);
 			}
 		}
 
-		swap(array, wallIndex + 1, pivot);
+		swap(array, pIndex + 1, pivot);
 
-		sort(array, left, wallIndex);
-		sort(array, wallIndex + 1, right);
+		sort(array, left, pIndex);
+		sort(array, pIndex + 1, right);
 	}
 
 	private static void swap(int[] array, int i, int j) {
