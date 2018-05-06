@@ -64,15 +64,11 @@ public class MergeSort {
 		}
 
 		while (i < left.length) {
-			a[k] = left[i];
-			i++;
-			k++;
+			a[k++] = left[i++];
 		}
 
 		while (j < right.length) {
-			a[k] = right[j];
-			j++;
-			k++;
+			a[k++] = right[j++];
 		}
 	}
 }
