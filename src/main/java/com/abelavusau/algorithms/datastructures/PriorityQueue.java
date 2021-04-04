@@ -3,8 +3,10 @@ package com.abelavusau.algorithms.datastructures;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class PriorityQueue<E extends Comparable<E>> {
+    private final Random r = new Random();
     private final List<E> heap;
 
     public PriorityQueue(E[] elements) {
@@ -39,6 +41,44 @@ public class PriorityQueue<E extends Comparable<E>> {
 
     public E peek() {
         return heap.get(0);
+    }
+
+    public E sample() {
+        int i = r.nextInt(heap.size());
+        return heap.get(i);
+    }
+
+    public E delRandom() {
+        int i = r.nextInt(heap.size());
+        E e = heap.get(i);
+        swap(i, heap.size() - 1);
+        heap.remove(heap.size() - 1);
+        fixInvariant(i);
+        return e;
+    }
+
+    /**
+     * Maintains heap's invariant.
+     * Check nodes' children as well as its parent.
+     * If heap's invariant is broken - sink or swim depending on the result of analysis.
+     * @param k - a node
+     */
+    private void fixInvariant(int k) {
+        int l = 2 * k + 1;
+        int r = 2 * k + 2;
+        int p = (k - 1) / 2;
+
+        if (l < heap.size() && lessThan(heap.get(k), heap.get(l))) {
+            sink(k);
+        }
+
+        if (r < heap.size() && lessThan(heap.get(k), heap.get(r))) {
+            sink(k);
+        }
+
+        if (p >= 0 && lessThan(heap.get(p), heap.get(k))) {
+            swim(k);
+        }
     }
 
     private void buildHeap() {
@@ -115,6 +155,9 @@ public class PriorityQueue<E extends Comparable<E>> {
         System.out.println("Poll: " + p.poll());
         System.out.println("=======================");
         p.print();
-
+        System.out.println("=======================");
+        System.out.println("Delete random: " + p.delRandom());
+        System.out.println("=======================");
+        p.print();
     }
 }
