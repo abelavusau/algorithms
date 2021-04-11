@@ -1,4 +1,4 @@
-package com.abelavusau.algorithms.coursera.algorithms.p1.week4;
+package com.abelavusau.algorithms.coursera.algorithms.p1.week4.puzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;

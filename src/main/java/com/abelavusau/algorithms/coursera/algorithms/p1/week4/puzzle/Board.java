@@ -1,4 +1,4 @@
-package com.abelavusau.algorithms.coursera.algorithms.p1.week4;
+package com.abelavusau.algorithms.coursera.algorithms.p1.week4.puzzle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
