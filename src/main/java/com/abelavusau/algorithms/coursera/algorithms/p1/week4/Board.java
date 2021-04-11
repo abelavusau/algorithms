@@ -8,20 +8,11 @@ import java.util.Random;
 public class Board {
     private final Random r = new Random();
     private final int[][] tiles;
-    private Board goal;
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         this.tiles = tiles;
-    }
-
-    public void setGoal(Board goal) {
-        this.goal = goal;
-    }
-
-    public int[][] getTiles() {
-        return this.tiles;
     }
 
     // string representation of this board
@@ -175,9 +166,24 @@ public class Board {
     // unit testing (not graded)
     public static void main(String[] args) {
         int[][] tiles = new int[][]{
-                {1, 2, 3}, {4, 0, 6}, {8, 5, 7}
+                {1, 3, 0}, {4, 2, 5}, {7, 8, 6}
         };
 
         Board b = new Board(tiles);
+
+        System.out.println("Initial board:");
+        System.out.println(b);
+
+        System.out.println("Neighbors:");
+        b.neighbors().forEach(System.out::println);
+
+        System.out.println("Twin:");
+        System.out.println(b.twin());
+
+        System.out.println("Hamming:");
+        System.out.println(b.hamming());
+
+        System.out.println("Manhattan:");
+        System.out.println(b.manhattan());
     }
 }
