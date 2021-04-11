@@ -17,6 +17,10 @@ public class Board {
         this.tiles = tiles;
     }
 
+    public int[][] getTiles() {
+        return tiles;
+    }
+
     // string representation of this board
     public String toString() {
         StringBuilder s = new StringBuilder(tiles.length + "\n");

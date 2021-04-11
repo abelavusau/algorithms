@@ -9,16 +9,48 @@ import java.util.Deque;
 
 public class Solver {
     private final MinPQ<Node> queue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
-    int moves;
+    private final Board initial;
+    private int moves;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
+        this.initial = initial;
         queue.insert(new Node(initial, 0, null));
     }
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return moves > -1;
+        int[][] tiles = initial.getTiles();
+        int inversions = 0;
+        int zeroRow = 0;
+
+        for (int i = 0; i < tiles.length * tiles.length; i++) {
+            int r1 = i / tiles.length;
+            int c1 = i % tiles.length;
+
+            if (tiles[r1][c1] == 0) {
+                zeroRow = r1;
+            }
+
+            for (int j = i; j < tiles.length * tiles.length; j++) {
+                int r2 = j / tiles.length;
+                int c2 = j % tiles.length;
+
+                if (tiles[r1][c1] > 0 && tiles[r1][c1] > tiles[r2][c2]) {
+                    inversions++;
+                }
+            }
+        }
+
+        if (tiles.length % 2 != 0 && inversions % 2 != 0) {
+            return false;
+        }
+
+        if (tiles.length % 2 == 0 && (inversions + zeroRow) % 2 == 0) {
+            return false;
+        }
+
+        return true;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
@@ -46,7 +78,7 @@ public class Solver {
             Node finalMin = min;
             min.board.neighbors().forEach(
                     board -> {
-                        if (!board.equals(finalMin.previous.board)) {
+                        if (finalMin.previous != null && !board.equals(finalMin.previous.board)) {
                             queue.insert(new Node(board, board.manhattan() + finalMoves, finalMin));
                         }
                     }
@@ -65,8 +97,14 @@ public class Solver {
 //        for (int i = 0; i < n; i++)
 //            for (int j = 0; j < n; j++)
 //                tiles[i][j] = in.readInt();
+
+        /**
+         8  6  7
+         2  5  4
+         1  3  0
+         */
         int[][] tiles = new int[][]{
-                {1, 3, 0}, {4, 2, 5}, {7, 8, 6}
+                {8, 6, 5}, {2, 5, 4}, {3, 0, 1}
         };
         Board initial = new Board(tiles);
 
