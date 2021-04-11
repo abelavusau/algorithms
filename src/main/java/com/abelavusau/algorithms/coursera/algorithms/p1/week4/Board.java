@@ -8,6 +8,8 @@ import java.util.Random;
 public class Board {
     private final Random r = new Random();
     private final int[][] tiles;
+    private int hamming = -1;
+    private int manhattan = -1;
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
@@ -39,47 +41,46 @@ public class Board {
 
     // number of tiles out of place
     public int hamming() {
-        int h = 0;
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles[i].length; j++) {
-                int properValue = getProperValue(i, j);
+        if (hamming == -1) {
+            int h = 0;
+            for (int i = 0; i < tiles.length; i++) {
+                for (int j = 0; j < tiles[i].length; j++) {
+                    int properValue = getProperValue(i, j);
 
-                if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
-                    h++;
+                    if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
+                        h++;
+                    }
                 }
             }
+
+            hamming = h;
         }
 
-        return h;
-    }
-
-    private int getProperValue(int i, int j) {
-        int properValue = 0;
-
-        if (i != dimension() - 1 || j != dimension() - 1) {
-            properValue = i * tiles.length + j + 1;
-        }
-        return properValue;
+        return hamming;
     }
 
     // sum of Manhattan distances between tiles and goal
     // abs(x_val - x_goal) + abs(y_val - y_goal)
     public int manhattan() {
-        int m = 0;
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles.length; j++) {
-                int properValue = getProperValue(i, j);
+        if (manhattan == -1) {
+            int m = 0;
+            for (int i = 0; i < tiles.length; i++) {
+                for (int j = 0; j < tiles.length; j++) {
+                    int properValue = getProperValue(i, j);
 
-                if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
-                    int value = tiles[i][j] - 1;
-                    int x_goal = value % dimension();
-                    int y_goal = value / dimension();
-                    m += Math.abs(j - x_goal) + Math.abs(i - y_goal);
+                    if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
+                        int value = tiles[i][j] - 1;
+                        int x_goal = value % dimension();
+                        int y_goal = value / dimension();
+                        m += Math.abs(j - x_goal) + Math.abs(i - y_goal);
+                    }
                 }
             }
+
+            manhattan = m;
         }
 
-        return m;
+        return manhattan;
     }
 
     // is this board the goal board?
@@ -163,10 +164,19 @@ public class Board {
         return new Board(copy);
     }
 
+    private int getProperValue(int i, int j) {
+        int properValue = 0;
+
+        if (i != dimension() - 1 || j != dimension() - 1) {
+            properValue = i * tiles.length + j + 1;
+        }
+        return properValue;
+    }
+
     // unit testing (not graded)
     public static void main(String[] args) {
         int[][] tiles = new int[][]{
-                {1, 3, 0}, {4, 2, 5}, {7, 8, 6}
+                {1, 2, 0}, {4, 3, 6}, {7, 8, 5}
         };
 
         Board b = new Board(tiles);
