@@ -51,7 +51,9 @@ public class Board {
         int h = 0;
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
-                if (tiles[i][j] != 0 && tiles[i][j] != goal.getTiles()[i][j]) {
+                int properValue = getProperValue(i, j);
+
+                if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
                     h++;
                 }
             }
@@ -60,13 +62,24 @@ public class Board {
         return h;
     }
 
+    private int getProperValue(int i, int j) {
+        int properValue = 0;
+
+        if (i != dimension() - 1 || j != dimension() - 1) {
+            properValue = i * tiles.length + j + 1;
+        }
+        return properValue;
+    }
+
     // sum of Manhattan distances between tiles and goal
     // abs(x_val - x_goal) + abs(y_val - y_goal)
     public int manhattan() {
         int m = 0;
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles.length; j++) {
-                if (tiles[i][j] != 0 && tiles[i][j] != goal.getTiles()[i][j]) {
+                int properValue = getProperValue(i, j);
+
+                if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
                     int value = tiles[i][j] - 1;
                     int x_goal = value % dimension();
                     int y_goal = value / dimension();
@@ -165,21 +178,6 @@ public class Board {
                 {1, 2, 3}, {4, 0, 6}, {8, 5, 7}
         };
 
-        int[][] goalTiles = new int[tiles.length][tiles.length];
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles.length; j++) {
-                int value = i * tiles.length + j + 1;
-
-                if (value == tiles.length * tiles.length) {
-                    value = 0;
-                }
-
-                goalTiles[i][j] = value;
-            }
-        }
-
         Board b = new Board(tiles);
-        Board goal = new Board(goalTiles);
-        b.setGoal(goal);
     }
 }
