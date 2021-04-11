@@ -148,18 +148,24 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
         int[][] copy = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
-        int i1 = 0, i2 = 0, j1 = 0, j2 = 0;
 
-        while (i1 == i2 && j1 == j2) {
-            i1 = r.nextInt(dimension());
-            j1 = r.nextInt(dimension());
-            i2 = r.nextInt(dimension());
-            j2 = r.nextInt(dimension());
+        int i = r.nextInt(dimension());
+        int j = r.nextInt(dimension());
+
+        while (copy[i][j] == 0) {
+            i = r.nextInt(dimension());
+            j = r.nextInt(dimension());
         }
 
-        int tmp = copy[i1][j1];
-        copy[i1][j1] = copy[i2][j2];
-        copy[i2][j2] = tmp;
+        if (j == 0 && copy[i][j + 1] != 0) {
+            int tmp = copy[i][j];
+            copy[i][j] = copy[i][j + 1];
+            copy[i][j + 1] = tmp;
+        } else if (copy[i][j - 1] != 0) {
+            int tmp = copy[i][j];
+            copy[i][j] = copy[i][j - 1];
+            copy[i][j - 1] = tmp;
+        }
 
         return new Board(copy);
     }
@@ -176,7 +182,7 @@ public class Board {
     // unit testing (not graded)
     public static void main(String[] args) {
         int[][] tiles = new int[][]{
-                {1, 2, 0}, {4, 3, 6}, {7, 8, 5}
+                {1, 2, 3}, {4, 5, 6}, {8, 7, 0}
         };
 
         Board b = new Board(tiles);
