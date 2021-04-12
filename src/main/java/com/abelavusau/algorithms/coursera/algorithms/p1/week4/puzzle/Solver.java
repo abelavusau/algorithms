@@ -11,6 +11,7 @@ public class Solver {
     private final MinPQ<Node> queue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
     private final Board initial;
     private int moves;
+    private final static int MOVE_LIMIT = 1000;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
@@ -42,11 +43,15 @@ public class Solver {
             }
         }
 
+        moves = inversions;
+
         if (tiles.length % 2 != 0 && inversions % 2 != 0) {
+            moves = -1;
             return false;
         }
 
         if (tiles.length % 2 == 0 && (inversions + zeroRow) % 2 == 0) {
+            moves = -1;
             return false;
         }
 
@@ -61,11 +66,12 @@ public class Solver {
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         moves = 0;
-        Deque<Board> solution = new ArrayDeque<>();
-        while (true) {
+        Deque<Board> solution = null;
+        while (!queue.isEmpty() && moves < MOVE_LIMIT) {
             Node min = queue.delMin();
 
             if (min.board.isGoal()) {
+                solution = new ArrayDeque<>();
                 while (min != null) {
                     solution.addFirst(min.board);
                     min = min.previous;
@@ -78,7 +84,7 @@ public class Solver {
             Node finalMin = min;
             min.board.neighbors().forEach(
                     board -> {
-                        if (finalMin.previous != null && !board.equals(finalMin.previous.board)) {
+                        if (finalMin.previous == null || !board.equals(finalMin.previous.board)) {
                             queue.insert(new Node(board, board.manhattan() + finalMoves, finalMin));
                         }
                     }
@@ -86,6 +92,8 @@ public class Solver {
 
             moves++;
         }
+
+        return solution;
     }
 
     // test client (see below)
@@ -104,7 +112,7 @@ public class Solver {
          1  3  0
          */
         int[][] tiles = new int[][]{
-                {8, 6, 5}, {2, 5, 4}, {3, 0, 1}
+                {4, 0, 3}, {1, 2, 5}, {7, 8, 6}
         };
         Board initial = new Board(tiles);
 
