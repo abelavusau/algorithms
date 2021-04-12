@@ -37,7 +37,7 @@ public class Solver {
                 int r2 = j / tiles.length;
                 int c2 = j % tiles.length;
 
-                if (tiles[r1][c1] > 0 && tiles[r1][c1] > tiles[r2][c2]) {
+                if (tiles[r2][c2] > 0 && tiles[r1][c1] > tiles[r2][c2]) {
                     inversions++;
                 }
             }
@@ -112,7 +112,7 @@ public class Solver {
          1  3  0
          */
         int[][] tiles = new int[][]{
-                {4, 0, 3}, {1, 2, 5}, {7, 8, 6}
+                {0, 1, 3}, {4, 2, 5}, {7, 8, 6}
         };
         Board initial = new Board(tiles);
 
