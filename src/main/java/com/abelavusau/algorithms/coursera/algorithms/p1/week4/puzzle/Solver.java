@@ -1,11 +1,10 @@
 package com.abelavusau.algorithms.coursera.algorithms.p1.week4.puzzle;
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.Deque;
+import java.util.*;
 
 public class Solver {
     private final MinPQ<Node> queue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
@@ -15,6 +14,9 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
+        if (initial == null) {
+            throw new IllegalArgumentException();
+        }
         this.initial = initial;
         queue.insert(new Node(initial, 0, null));
     }
@@ -43,15 +45,11 @@ public class Solver {
             }
         }
 
-        moves = inversions;
-
         if (tiles.length % 2 != 0 && inversions % 2 != 0) {
-            moves = -1;
             return false;
         }
 
         if (tiles.length % 2 == 0 && (inversions + zeroRow) % 2 == 0) {
-            moves = -1;
             return false;
         }
 
@@ -66,20 +64,16 @@ public class Solver {
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         moves = 0;
-        Deque<Board> solution = null;
-        while (!queue.isEmpty() && moves < MOVE_LIMIT) {
-            Node min = queue.delMin();
+        List<Board> solution = new ArrayList<>();
+        Node min = queue.delMin();
+        solution.add(min.board);
 
-            if (min.board.isGoal()) {
-                solution = new ArrayDeque<>();
-                while (min != null) {
-                    solution.addFirst(min.board);
-                    min = min.previous;
-                }
-
-                return solution;
+        while (!min.board.isGoal()) {
+            if (!queue.isEmpty()) {
+                min = queue.delMin();
+                solution.add(min.board);
+                moves++;
             }
-
             int finalMoves = moves;
             Node finalMin = min;
             min.board.neighbors().forEach(
@@ -89,8 +83,6 @@ public class Solver {
                         }
                     }
             );
-
-            moves++;
         }
 
         return solution;
@@ -99,21 +91,21 @@ public class Solver {
     // test client (see below)
     public static void main(String[] args) {
         // create initial board from file
-//        In in = new In(args[0]);
-//        int n = in.readInt();
-//        int[][] tiles = new int[n][n];
-//        for (int i = 0; i < n; i++)
-//            for (int j = 0; j < n; j++)
-//                tiles[i][j] = in.readInt();
+        In in = new In(args[0]);
+        int n = in.readInt();
+        int[][] tiles = new int[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                tiles[i][j] = in.readInt();
 
         /**
          8  6  7
          2  5  4
          1  3  0
          */
-        int[][] tiles = new int[][]{
-                {0, 1, 3}, {4, 2, 5}, {7, 8, 6}
-        };
+//        int[][] tiles = new int[][]{
+//                {0, 1, 3}, {4, 2, 5}, {7, 8, 6}
+//        };
         Board initial = new Board(tiles);
 
         // solve the puzzle
