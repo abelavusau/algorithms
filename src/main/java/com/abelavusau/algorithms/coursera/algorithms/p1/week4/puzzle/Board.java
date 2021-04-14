@@ -1,12 +1,12 @@
 package com.abelavusau.algorithms.coursera.algorithms.p1.week4.puzzle;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class Board {
-    private final Random r = new Random();
     private final int[][] tiles;
     private int hamming = -1;
     private int manhattan = -1;
@@ -14,11 +14,7 @@ public class Board {
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
-        this.tiles = tiles;
-    }
-
-    public int[][] getTiles() {
-        return tiles;
+        this.tiles = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
     }
 
     // string representation of this board
@@ -74,9 +70,9 @@ public class Board {
 
                     if (tiles[i][j] != 0 && tiles[i][j] != properValue) {
                         int value = tiles[i][j] - 1;
-                        int x_goal = value % dimension();
-                        int y_goal = value / dimension();
-                        m += Math.abs(j - x_goal) + Math.abs(i - y_goal);
+                        int xGoal = value / dimension();
+                        int yGoal = value % dimension();
+                        m += Math.abs(i - xGoal) + Math.abs(j - yGoal);
                     }
                 }
             }
@@ -89,6 +85,9 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
+        if (tiles[tiles.length - 1][tiles.length - 1] != 0) {
+            return false;
+        }
         return hamming() == 0;
     }
 
@@ -97,7 +96,7 @@ public class Board {
         if (this == y) return true;
         if (y == null || getClass() != y.getClass()) return false;
         Board board = (Board) y;
-        return Arrays.equals(tiles, board.tiles);
+        return Arrays.deepEquals(tiles, board.tiles);
     }
 
     // all neighboring boards
@@ -106,40 +105,31 @@ public class Board {
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
                 if (tiles[i][j] == 0) {
-                    int empty = tiles[i][j];
                     // move up
                     if (i - 1 >= 0) {
                         int[][] copy = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
-                        int tmp = copy[i - 1][j];
-                        copy[i - 1][j] = empty;
-                        copy[i][j] = tmp;
+                        swap(copy, i - 1, j, i, j);
                         neighbors.add(new Board(copy));
                     }
 
                     // move down
                     if (i + 1 < dimension()) {
                         int[][] copy = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
-                        int tmp = copy[i + 1][j];
-                        copy[i + 1][j] = empty;
-                        copy[i][j] = tmp;
+                        swap(copy, i + 1, j, i, j);
                         neighbors.add(new Board(copy));
                     }
 
                     // move left
                     if (j - 1 >= 0) {
                         int[][] copy = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
-                        int tmp = copy[i][j - 1];
-                        copy[i][j - 1] = empty;
-                        copy[i][j] = tmp;
+                        swap(copy, i, j - 1, i, j);
                         neighbors.add(new Board(copy));
                     }
 
                     // move right
                     if (j + 1 < dimension()) {
                         int[][] copy = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
-                        int tmp = copy[i][j + 1];
-                        copy[i][j + 1] = empty;
-                        copy[i][j] = tmp;
+                        swap(copy, i, j + 1, i, j);
                         neighbors.add(new Board(copy));
                     }
                 }
@@ -153,22 +143,32 @@ public class Board {
     public Board twin() {
         int[][] copy = Arrays.stream(tiles).map(int[]::clone).toArray(int[][]::new);
 
-        int i = r.nextInt(dimension());
-        int j = r.nextInt(dimension());
+        int r = StdRandom.uniform(dimension() * dimension());
+        int i = r / copy.length;
+        int j = r % copy.length;
 
         while (copy[i][j] == 0) {
-            i = r.nextInt(dimension());
-            j = r.nextInt(dimension());
+            r = StdRandom.uniform(dimension() * dimension());
+            i = r / copy.length;
+            j = r % copy.length;
         }
 
-        if (j == 0 && copy[i][j + 1] != 0) {
-            int tmp = copy[i][j];
-            copy[i][j] = copy[i][j + 1];
-            copy[i][j + 1] = tmp;
-        } else if (copy[i][j - 1] != 0) {
-            int tmp = copy[i][j];
-            copy[i][j] = copy[i][j - 1];
-            copy[i][j - 1] = tmp;
+        boolean swapSuccess = false;
+
+        while (!swapSuccess) {
+            if (j < dimension() - 1 && copy[i][j + 1] != 0) {
+                swap(copy, i, j, i, j + 1);
+                swapSuccess = true;
+            } else if (j > 0 && copy[i][j - 1] != 0) {
+                swap(copy, i, j, i, j - 1);
+                swapSuccess = true;
+            } else if (i < dimension() - 1) {
+                i++;
+                swapSuccess = false;
+            } else if (i == dimension() - 1) {
+                i--;
+                swapSuccess = false;
+            }
         }
 
         return new Board(copy);
@@ -177,16 +177,23 @@ public class Board {
     private int getProperValue(int i, int j) {
         int properValue = 0;
 
-        if (i != dimension() - 1 || j != dimension() - 1) {
-            properValue = i * tiles.length + j + 1;
+        if (i == dimension() - 1 && j == dimension() - 1) {
+            return properValue;
         }
+        properValue = i * tiles.length + j + 1;
         return properValue;
+    }
+
+    private void swap(int[][] array, int i1, int j1, int i2, int j2) {
+        int tmp = array[i1][j1];
+        array[i1][j1] = array[i2][j2];
+        array[i2][j2] = tmp;
     }
 
     // unit testing (not graded)
     public static void main(String[] args) {
         int[][] tiles = new int[][]{
-                {1, 2, 3}, {4, 5, 6}, {8, 7, 0}
+                {4, 1, 0}, {5, 3, 2}, {7, 8, 6}
         };
 
         Board b = new Board(tiles);

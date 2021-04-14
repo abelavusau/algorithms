@@ -4,87 +4,70 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Comparator;
+import java.util.Deque;
 
 public class Solver {
     private final MinPQ<Node> queue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
-    private final Board initial;
-    private int moves;
-    private final static int MOVE_LIMIT = 1000;
+    private final MinPQ<Node> twinQueue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
+    private int moves = 0;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-        this.initial = initial;
         queue.insert(new Node(initial, 0, null));
-    }
-
-    // is the initial board solvable? (see below)
-    public boolean isSolvable() {
-        int[][] tiles = initial.getTiles();
-        int inversions = 0;
-        int zeroRow = 0;
-
-        for (int i = 0; i < tiles.length * tiles.length; i++) {
-            int r1 = i / tiles.length;
-            int c1 = i % tiles.length;
-
-            if (tiles[r1][c1] == 0) {
-                zeroRow = r1;
-            }
-
-            for (int j = i; j < tiles.length * tiles.length; j++) {
-                int r2 = j / tiles.length;
-                int c2 = j % tiles.length;
-
-                if (tiles[r2][c2] > 0 && tiles[r1][c1] > tiles[r2][c2]) {
-                    inversions++;
-                }
-            }
-        }
-
-        if (tiles.length % 2 != 0 && inversions % 2 != 0) {
-            return false;
-        }
-
-        if (tiles.length % 2 == 0 && (inversions + zeroRow) % 2 == 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // min number of moves to solve initial board; -1 if unsolvable
-    public int moves() {
-        return moves;
-    }
-
-    // sequence of boards in a shortest solution; null if unsolvable
-    public Iterable<Board> solution() {
-        moves = 0;
-        List<Board> solution = new ArrayList<>();
-        Node min = queue.delMin();
-        solution.add(min.board);
-
-        while (!min.board.isGoal()) {
-            if (!queue.isEmpty()) {
-                min = queue.delMin();
-                solution.add(min.board);
-                moves++;
-            }
-            int finalMoves = moves;
-            Node finalMin = min;
+        twinQueue.insert(new Node(initial.twin(), 0, null));
+        while (!queue.min().board.isGoal() && !twinQueue.min().board.isGoal()) {
+            Node min = queue.delMin();
+            moves++;
             min.board.neighbors().forEach(
                     board -> {
-                        if (finalMin.previous == null || !board.equals(finalMin.previous.board)) {
-                            queue.insert(new Node(board, board.manhattan() + finalMoves, finalMin));
+                        if (min.previous == null || !board.equals(min.previous.board)) {
+                            queue.insert(new Node(board, board.manhattan() + moves, min));
+                        }
+                    }
+            );
+
+            Node twinMin = twinQueue.delMin();
+            twinMin.board.neighbors().forEach(
+                    board -> {
+                        if (twinMin.previous == null || !board.equals(twinMin.previous.board)) {
+                            twinQueue.insert(new Node(board, board.manhattan() + moves, twinMin));
                         }
                     }
             );
         }
+    }
 
+    // is the initial board solvable? (see below)
+    public boolean isSolvable() {
+        return queue.min().board.isGoal() || !twinQueue.min().board.isGoal();
+    }
+
+    // min number of moves to solve initial board; -1 if unsolvable
+    public int moves() {
+        if (isSolvable()) {
+            return moves;
+        } else {
+            return -1;
+        }
+    }
+
+    // sequence of boards in a shortest solution; null if unsolvable
+    public Iterable<Board> solution() {
+        Deque<Board> solution = null;
+
+        if (isSolvable()) {
+            solution = new ArrayDeque<>();
+            Node node = queue.min();
+            while (node != null) {
+                solution.addFirst(node.board);
+                node = node.previous;
+            }
+        }
         return solution;
     }
 
@@ -98,14 +81,6 @@ public class Solver {
             for (int j = 0; j < n; j++)
                 tiles[i][j] = in.readInt();
 
-        /**
-         8  6  7
-         2  5  4
-         1  3  0
-         */
-//        int[][] tiles = new int[][]{
-//                {0, 1, 3}, {4, 2, 5}, {7, 8, 6}
-//        };
         Board initial = new Board(tiles);
 
         // solve the puzzle
