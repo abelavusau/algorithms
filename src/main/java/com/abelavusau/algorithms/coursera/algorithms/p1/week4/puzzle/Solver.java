@@ -11,34 +11,30 @@ import java.util.Deque;
 public class Solver {
     private final MinPQ<Node> queue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
     private final MinPQ<Node> twinQueue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
-    private int moves = 0;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-        queue.insert(new Node(initial, 0, null));
-        twinQueue.insert(new Node(initial.twin(), 0, null));
+        queue.insert(new Node(initial, 0, 0, null));
+        twinQueue.insert(new Node(initial.twin(), 0, 0, null));
         while (!queue.min().board.isGoal() && !twinQueue.min().board.isGoal()) {
             Node min = queue.delMin();
-            moves++;
-            min.board.neighbors().forEach(
-                    board -> {
-                        if (min.previous == null || !board.equals(min.previous.board)) {
-                            queue.insert(new Node(board, board.manhattan() + moves, min));
-                        }
-                    }
-            );
+
+            for (Board board : min.board.neighbors()) {
+                if (min.previous == null || !board.equals(min.previous.board)) {
+                    queue.insert(new Node(board, board.manhattan() + min.moves + 1, min.moves + 1, min));
+                }
+            }
 
             Node twinMin = twinQueue.delMin();
-            twinMin.board.neighbors().forEach(
-                    board -> {
-                        if (twinMin.previous == null || !board.equals(twinMin.previous.board)) {
-                            twinQueue.insert(new Node(board, board.manhattan() + moves, twinMin));
-                        }
-                    }
-            );
+
+            for (Board board : twinMin.board.neighbors()) {
+                if (twinMin.previous == null || !board.equals(twinMin.previous.board)) {
+                    twinQueue.insert(new Node(board, board.manhattan() + twinMin.moves + 1, twinMin.moves + 1, twinMin));
+                }
+            }
         }
     }
 
@@ -50,7 +46,7 @@ public class Solver {
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
         if (isSolvable()) {
-            return moves;
+            return queue.min().moves;
         } else {
             return -1;
         }
@@ -99,11 +95,13 @@ public class Solver {
     private static class Node {
         private final Board board;
         private final int priority;
+        private final int moves;
         private final Node previous;
 
-        public Node(Board board, int priority, Node previous) {
+        public Node(Board board, int priority, int moves, Node previous) {
             this.board = board;
             this.priority = priority;
+            this.moves = moves;
             this.previous = previous;
         }
     }

@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Board {
-    private final byte[] tiles;
+    private final char[] board;
+    private Board twin;
     private final int n;
     private int hamming = -1;
     private int manhattan = -1;
@@ -17,14 +18,14 @@ public class Board {
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         this.n = tiles.length;
-        this.tiles = new byte[n * n];
+        this.board = new char[n * n];
         int k = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (tiles[i][j] == 0) {
                     emptyPos = k;
                 }
-                this.tiles[k++] = (byte) tiles[i][j];
+                this.board[k++] = (char) tiles[i][j];
             }
         }
     }
@@ -35,7 +36,7 @@ public class Board {
         int k = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                s.append(tiles[k++]);
+                s.append((int) board[k++]);
                 if (j < n - 1) {
                     s.append(" ");
                 }
@@ -57,7 +58,7 @@ public class Board {
         if (hamming == -1) {
             int h = 0;
             for (int i = 0; i < n * n; i++) {
-                if (tiles[i] != 0 && tiles[i] != i + 1) {
+                if (board[i] != 0 && board[i] != i + 1) {
                     h++;
                 }
             }
@@ -74,8 +75,8 @@ public class Board {
         if (manhattan == -1) {
             int m = 0;
             for (int i = 0; i < n * n; i++) {
-                if (tiles[i] != 0 && tiles[i] != i + 1) {
-                    int value = tiles[i] - 1;
+                if (board[i] != 0 && board[i] != i + 1) {
+                    int value = board[i] - 1;
                     int xGoal = value / n;
                     int yGoal = value % n;
 
@@ -93,7 +94,7 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        if (tiles[n * n - 1] != 0) {
+        if (board[n * n - 1] != 0) {
             return false;
         }
         return hamming() == 0;
@@ -104,7 +105,7 @@ public class Board {
         if (this == y) return true;
         if (y == null || getClass() != y.getClass()) return false;
         Board board = (Board) y;
-        return Arrays.equals(tiles, board.tiles);
+        return Arrays.equals(this.board, board.board);
     }
 
     // all neighboring boards
@@ -116,7 +117,7 @@ public class Board {
         // move up
         if (i - 1 >= 0) {
             exch = (i - 1) * n + j;
-            byte[] copy = tiles.clone();
+            char[] copy = board.clone();
             swap(copy, exch, emptyPos);
             neighbors.add(new Board(to2DimArray(copy)));
         }
@@ -124,7 +125,7 @@ public class Board {
         // move down
         if (i + 1 < n) {
             exch = (i + 1) * n + j;
-            byte[] copy = tiles.clone();
+            char[] copy = board.clone();
             swap(copy, exch, emptyPos);
             neighbors.add(new Board(to2DimArray(copy)));
         }
@@ -132,7 +133,7 @@ public class Board {
         // move left
         if (j - 1 >= 0) {
             exch = i * n + (j - 1);
-            byte[] copy = tiles.clone();
+            char[] copy = board.clone();
             swap(copy, exch, emptyPos);
             neighbors.add(new Board(to2DimArray(copy)));
         }
@@ -140,7 +141,7 @@ public class Board {
         // move right
         if (j + 1 < n) {
             exch = i * n + (j + 1);
-            byte[] copy = tiles.clone();
+            char[] copy = board.clone();
             swap(copy, exch, emptyPos);
             neighbors.add(new Board(to2DimArray(copy)));
         }
@@ -150,38 +151,42 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        byte[] copy = tiles.clone();
-        int r = StdRandom.uniform(n * n);
+        if (twin == null) {
+            char[] copy = board.clone();
+            int r = StdRandom.uniform(n * n);
 
-        while (copy[r] == 0) {
-            r = StdRandom.uniform(n * n);
-        }
-
-        int i = r / n;
-        int j = r % n;
-
-        boolean swapSuccess = false;
-
-        while (!swapSuccess) {
-            if (j + 1 < n && copy[i * n + (j + 1)] != 0) {
-                swap(copy, i * n + j, i * n + (j + 1));
-                swapSuccess = true;
-            } else if (j > 0 && copy[i * n + (j - 1)] != 0) {
-                swap(copy, i * n + j, i * n + (j - 1));
-                swapSuccess = true;
-            } else if (i < n - 1) {
-                i++;
-                swapSuccess = false;
-            } else if (i == n - 1) {
-                i--;
-                swapSuccess = false;
+            while (copy[r] == 0) {
+                r = StdRandom.uniform(n * n);
             }
+
+            int i = r / n;
+            int j = r % n;
+
+            boolean swapSuccess = false;
+
+            while (!swapSuccess) {
+                if (j + 1 < n && copy[i * n + (j + 1)] != 0) {
+                    swap(copy, i * n + j, i * n + (j + 1));
+                    swapSuccess = true;
+                } else if (j > 0 && copy[i * n + (j - 1)] != 0) {
+                    swap(copy, i * n + j, i * n + (j - 1));
+                    swapSuccess = true;
+                } else if (i < n - 1) {
+                    i++;
+                    swapSuccess = false;
+                } else if (i == n - 1) {
+                    i--;
+                    swapSuccess = false;
+                }
+            }
+
+            twin = new Board(to2DimArray(copy));
         }
 
-        return new Board(to2DimArray(copy));
+        return twin;
     }
 
-    private int[][] to2DimArray(byte[] tiles) {
+    private int[][] to2DimArray(char[] tiles) {
         int[][] matrix = new int[n][n];
 
         for (int i = 0; i < n; i++) {
@@ -193,33 +198,33 @@ public class Board {
         return matrix;
     }
 
-    private void swap(byte[] array, int i, int j) {
-        byte tmp = array[i];
+    private void swap(char[] array, int i, int j) {
+        char tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
     }
 
     // unit testing (not graded)
-    public static void main(String[] args) {
-        int[][] tiles = new int[][]{
-                {4, 1, 0}, {5, 3, 2}, {7, 8, 6}
-        };
-
-        Board b = new Board(tiles);
-
-        System.out.println("Initial board:");
-        System.out.println(b);
-
-        System.out.println("Neighbors:");
-        b.neighbors().forEach(System.out::println);
-
-        System.out.println("Twin:");
-        System.out.println(b.twin());
-
-        System.out.println("Hamming:");
-        System.out.println(b.hamming());
-
-        System.out.println("Manhattan:");
-        System.out.println(b.manhattan());
-    }
+//    public static void main(String[] args) {
+//        int[][] tiles = new int[][]{
+//                {4, 1, 0}, {5, 3, 2}, {7, 8, 6}
+//        };
+//
+//        Board b = new Board(tiles);
+//
+//        System.out.println("Initial board:");
+//        System.out.println(b);
+//
+//        System.out.println("Neighbors:");
+//        b.neighbors().forEach(System.out::println);
+//
+//        System.out.println("Twin:");
+//        System.out.println(b.twin());
+//
+//        System.out.println("Hamming:");
+//        System.out.println(b.hamming());
+//
+//        System.out.println("Manhattan:");
+//        System.out.println(b.manhattan());
+//    }
 }
