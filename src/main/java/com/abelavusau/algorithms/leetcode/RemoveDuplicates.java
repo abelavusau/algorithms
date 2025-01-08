@@ -12,7 +12,7 @@ public class RemoveDuplicates {
         while (l < r) {
             int k = l + 1;
 
-            if (k == r) return r;
+            if (k == r) break;
 
             if (nums[l] == nums[k]) {
                 while (k < r) {
