@@ -97,6 +97,21 @@ public class LinkedList<T> {
 		
 		return value;
 	}
+
+	public void reverse() {
+		Node<T> prev = null;
+		Node<T> current = head;
+		Node<T> next = null;
+
+		while (current != null) {
+			next = current.next; // Store the next node
+			current.next = prev; // Reverse the current node's pointer
+			prev = current;      // Move prev and current one step forward
+			current = next;
+		}
+
+		head = prev; // Update the head to the new front of the list
+	}
 	
 	@Override
 	public String toString() {
@@ -115,6 +130,10 @@ public class LinkedList<T> {
 		for (int i = 0; i < 10; i++) {
 			linkedList.add(i);
 		}
+
+		System.out.println("Reverse List: " + linkedList);
+		linkedList.reverse();
+		System.out.println(linkedList);
 		
 		System.out.println(linkedList.get(7));
 		linkedList.remove(7);
