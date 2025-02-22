@@ -101,10 +101,9 @@ public class LinkedList<T> {
 	public void reverse() {
 		Node<T> prev = null;
 		Node<T> current = head;
-		Node<T> next = null;
 
 		while (current != null) {
-			next = current.next; // Store the next node
+			Node<T> next = current.next; // Store the next node
 			current.next = prev; // Reverse the current node's pointer
 			prev = current;      // Move prev and current one step forward
 			current = next;
@@ -112,7 +111,50 @@ public class LinkedList<T> {
 
 		head = prev; // Update the head to the new front of the list
 	}
-	
+
+	public static Node<Integer> mergeLists(Node<Integer> list1, Node<Integer> list2) {
+		Node<Integer> current = null;
+		Node<Integer> head = null;
+
+		if (list1 == null) {
+			head = list2;
+		}
+
+		if (list2 == null) {
+			head = list1;
+		}
+
+		while (list1 != null && list2 != null) {
+			if (current == null) {
+				current = new Node<>(0);
+				head = current;
+			}
+			if (list1.value < list2.value) {
+				current.value = list1.value;
+				list1 = list1.next;
+			} else {
+				current.value = list2.value;
+				list2 = list2.next;
+			}
+			current.next = new Node<>(0);
+			current = current.next;
+		}
+
+		if (current == null) {
+			current = new Node<>(0);
+		}
+
+		if (list1 != null) {
+			current.value = list1.value;
+		}
+
+		if (list2 != null) {
+			current.value = list2.value;
+		}
+
+		return head;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -131,17 +173,33 @@ public class LinkedList<T> {
 			linkedList.add(i);
 		}
 
-		System.out.println("Reverse List: " + linkedList);
-		linkedList.reverse();
-		System.out.println(linkedList);
-		
-		System.out.println(linkedList.get(7));
-		linkedList.remove(7);
-		linkedList.remove(0);
-		linkedList.remove(9);
-		linkedList.add(7, 6);
-		linkedList.add(0, 0);
-		linkedList.add(10, 5);
-		System.out.println(linkedList);
+		LinkedList<Integer> linkedList1 = new LinkedList<>();
+		linkedList1.add(1);
+		linkedList1.add(3);
+		linkedList1.add(5);
+
+		LinkedList<Integer> linkedList2 = new LinkedList<>();
+		linkedList2.add(2);
+		linkedList2.add(4);
+		linkedList2.add(6);
+
+		LinkedList.Node<Integer> headOfMerged = mergeLists(linkedList1.head, linkedList2.head);
+
+		for (Node<Integer> cursor = headOfMerged; cursor != null; cursor = cursor.next) {
+			System.out.println(cursor.value);
+		}
+
+//		System.out.println("Reverse List: " + linkedList);
+//		linkedList.reverse();
+//		System.out.println(linkedList);
+//
+//		System.out.println(linkedList.get(7));
+//		linkedList.remove(7);
+//		linkedList.remove(0);
+//		linkedList.remove(9);
+//		linkedList.add(7, 6);
+//		linkedList.add(0, 0);
+//		linkedList.add(10, 5);
+//		System.out.println(linkedList);
 	}
 }
