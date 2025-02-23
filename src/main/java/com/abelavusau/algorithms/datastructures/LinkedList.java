@@ -113,20 +113,12 @@ public class LinkedList<T> {
 	}
 
 	public static Node<Integer> mergeLists(Node<Integer> list1, Node<Integer> list2) {
-		Node<Integer> current = null;
 		Node<Integer> head = null;
-
-		if (list1 == null) {
-			head = list2;
-		}
-
-		if (list2 == null) {
-			head = list1;
-		}
+		Node<Integer> current = null;
 
 		while (list1 != null && list2 != null) {
-			if (current == null) {
-				current = new Node<>(0);
+			if (head == null) {
+				current = new Node<>(null);
 				head = current;
 			}
 			if (list1.value < list2.value) {
@@ -136,20 +128,27 @@ public class LinkedList<T> {
 				current.value = list2.value;
 				list2 = list2.next;
 			}
-			current.next = new Node<>(0);
+
+			current.next = new Node<>(null);
 			current = current.next;
 		}
 
-		if (current == null) {
-			current = new Node<>(0);
-		}
-
 		if (list1 != null) {
-			current.value = list1.value;
+			if (head == null) {
+				head = list1;
+			} else {
+				current.value = list1.value;
+				current.next = list1.next;
+			}
 		}
 
 		if (list2 != null) {
-			current.value = list2.value;
+			if (head == null) {
+				head = list2;
+			} else {
+				current.value = list2.value;
+				current.next = list2.next;
+			}
 		}
 
 		return head;
@@ -177,13 +176,15 @@ public class LinkedList<T> {
 		linkedList1.add(1);
 		linkedList1.add(3);
 		linkedList1.add(5);
+		linkedList1.add(7);
+		linkedList1.add(9);
 
 		LinkedList<Integer> linkedList2 = new LinkedList<>();
 		linkedList2.add(2);
 		linkedList2.add(4);
-		linkedList2.add(6);
+//		linkedList2.add(6);
 
-		LinkedList.Node<Integer> headOfMerged = mergeLists(linkedList1.head, linkedList2.head);
+		LinkedList.Node<Integer> headOfMerged = mergeLists(null, null);
 
 		for (Node<Integer> cursor = headOfMerged; cursor != null; cursor = cursor.next) {
 			System.out.println(cursor.value);
